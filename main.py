@@ -104,7 +104,7 @@ def generate(state: MessagesState):
     - If the user asks about something mentioned earlier in the conversation, refer to that information
     - If the question requires information from the documents, use the retrieved context
     - If you don't know the answer from either source, say that you don't know
-    - Keep answers concise but informative
+    - Keep answers concise but informative in 3 or 4 lines at maximum
     - Maintain a conversational tone and remember previous interactions"""
     conversation_messages = [
         message
