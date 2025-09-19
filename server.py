@@ -1,60 +1,36 @@
-# server.py
 from fastapi import FastAPI
 from pydantic import BaseModel
 import uvicorn
-from main import graph  # import graph from main.py
-from typing import Optional, Dict, List
-import uuid
+
+from main import graph
+
 
 app = FastAPI()
 
-conversation_store: Dict[str, List[Dict]] = {}
 
-class Query(BaseModel):
-    question: str
-    session_id: Optional[str] = None
+class ChatRequest(BaseModel):
+    message: str
+    thread_id: str = "default"  
 
-class Response(BaseModel):
-    response: str
-    session_id: str
 
-@app.post("/ask")
-async def ask(query: Query) -> Response:
+class ChatResponse(BaseModel):
+    reply: str
 
-    session_id = query.session_id or str(uuid.uuid4())
+@app.post("/chat", response_model=ChatResponse)
+async def chat(request: ChatRequest):
+    config = {"configurable": {"thread_id": request.thread_id}}
 
-    existing_messages = conversation_store.get(session_id, [])
+    response_text = None
+    for step in graph.stream(
+        {"messages": [{"role": "user", "content": request.message}]},
+        stream_mode="values",
+        config=config,
+    ):
+        msg = step["messages"][-1]
+        if msg.type == "ai":
+            response_text = msg.content
 
-    current_messages = existing_messages + [{"role": "user", "content": query.question}]
-    
-    state = {"messages": current_messages}
-    
-    final_state = graph.invoke(state)
-    
-    conversation_store[session_id] = final_state["messages"]
-    
-    return Response(
-        response=final_state["messages"][-1].content,
-        session_id=session_id
-    )
-
-@app.get("/conversations/{session_id}")
-async def get_conversation(session_id: str):
-    """Optional: Get conversation history"""
-    messages = conversation_store.get(session_id, [])
-    return {"session_id": session_id, "messages": messages}
-
-@app.delete("/conversations/{session_id}")
-async def clear_conversation(session_id: str):
-    """Optional: Clear conversation history"""
-    if session_id in conversation_store:
-        del conversation_store[session_id]
-        return {"message": f"Conversation {session_id} cleared"}
-    return {"message": "Session not found"}
-
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy"}
+    return ChatResponse(reply=response_text or "No response")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
