@@ -40,7 +40,7 @@ vector_store = Chroma(
 
 
 file_path = (
-    "artificial.pdf"
+    "Transformers.pdf"
 )
 loader = PyPDFLoader(file_path)
 docs = loader.load()
@@ -140,21 +140,3 @@ graph = graph_builder.compile(checkpointer=memory)
 # Specify an ID for the thread
 config = {"configurable": {"thread_id": "abc123"}}
 
-
-input_message = "I'm Aksa Rose."
-
-for step in graph.stream(
-    {"messages": [{"role": "user", "content": input_message}]},
-    stream_mode="values",
-    config=config,
-):
-    step["messages"][-1].pretty_print()
-
-input_message = "what is my name?"
-
-for step in graph.stream(
-    {"messages": [{"role": "user", "content": input_message}]},
-    stream_mode="values",
-    config=config,
-):
-    step["messages"][-1].pretty_print()

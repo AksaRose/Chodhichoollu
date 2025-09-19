@@ -42,8 +42,8 @@ function App() {
 
   return (
     <div style={{ fontFamily: 'Arial, sans-serif', width: '800px', margin: '20px auto', border: '1px solid #ccc', borderRadius: '8px', padding: '15px' }}>
-      <h1 style={{ textAlign: 'center', color: '#333' }}>Chat with AI</h1>
-      <div style={{ border: '1px solid #eee', height: '300px', overflowY: 'scroll', padding: '10px', marginBottom: '10px', borderRadius: '4px', backgroundColor: '#f9f9f9' }}>
+      <h1 style={{ textAlign: 'center', color: '#333' }}>Attention Is All You Need</h1>
+      <div style={{ border: '1px solid #eee', height: '400px', overflowY: 'scroll', padding: '10px', marginBottom: '10px', borderRadius: '4px', backgroundColor: '#f9f9f9' }}>
         {messages.map((msg, index) => (
           <div key={index} style={{ marginBottom: '8px', textAlign: msg.type === 'user' ? 'right' : 'left' }}>
             <span style={{
