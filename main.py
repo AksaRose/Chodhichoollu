@@ -1,12 +1,6 @@
 from typing import Literal
 import os
 from dotenv import load_dotenv
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_chroma import Chroma
-from langchain_community.document_loaders import PyPDFLoader
-import bs4
-from langchain_core.vectorstores import InMemoryVectorStore
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langgraph.graph import START, StateGraph
 from typing_extensions import Annotated, List, TypedDict
 from langgraph.graph import MessagesState, StateGraph
@@ -16,7 +10,7 @@ from langgraph.prebuilt import ToolNode
 from langgraph.graph import END
 from langgraph.prebuilt import ToolNode, tools_condition
 from langgraph.checkpoint.memory import MemorySaver
-
+from store import vector_store
 
 
 load_dotenv()
@@ -28,32 +22,6 @@ print("Google API key:",os.getenv("GOOGLE_API_KEY"))
 from langchain.chat_models import init_chat_model
 
 llm = init_chat_model("gemini-2.5-flash", model_provider="google_genai")
-
-embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
-
-
-vector_store = Chroma(
-    collection_name="example_collection",
-    embedding_function=embeddings,
-    persist_directory="./chroma_langchain_db",  # Where to save data locally, remove if not necessary
-)
-
-
-file_path = (
-    "Transformers.pdf"
-)
-loader = PyPDFLoader(file_path)
-docs = loader.load()
-
-# Load and chunk contents of the blog
-
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-all_splits = text_splitter.split_documents(docs)
-
-
-# Index chunks
-vector_store = InMemoryVectorStore(embeddings)
-_ = vector_store.add_documents(all_splits)
 
 
 @tool(response_format="content_and_artifact")
