@@ -44,12 +44,13 @@ class ChatUploadResponse(BaseModel):
 
 
 @app.post("/upload", response_model=ChatUploadResponse)
-async def upload_file(file: UploadFile = File(...)):
-        
+async def upload_file(file: UploadFile = File(...)):   
     try:
         temp_path = f"./temp_{file.filename}"
         with open(temp_path,"wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
+        
+        vector_store._documents = [] 
 
         loader = PyPDFLoader(temp_path)
         docs = loader.load()
