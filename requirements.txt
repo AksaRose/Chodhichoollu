@@ -1,0 +1,10 @@
+langchain-huggingface
+langchain-core
+langchain-community
+langgraph
+python-dotenv
+fastapi
+uvicorn
+pydantic
+PyPDF2
+bs4

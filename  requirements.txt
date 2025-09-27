@@ -1,7 +1,0 @@
-fastapi
-uvicorn
-langchain
-langgraph
-python-dotenv
-pypdf
-...
