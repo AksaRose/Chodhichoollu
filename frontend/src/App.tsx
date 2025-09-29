@@ -31,7 +31,7 @@ function App() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
+      const data = await response.text();
       const aiMessage: ChatMessage = { type: 'ai', content: data.reply };
       setMessages((prevMessages) => [...prevMessages, aiMessage]);
     } catch (error) {

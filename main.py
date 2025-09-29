@@ -10,7 +10,7 @@ from langgraph.prebuilt import ToolNode
 from langgraph.graph import END
 from langgraph.prebuilt import ToolNode, tools_condition
 from langgraph.checkpoint.memory import MemorySaver
-from store import vector_store
+from store import vectorstore as vector_store
 
 
 load_dotenv()
