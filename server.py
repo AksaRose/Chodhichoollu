@@ -61,7 +61,9 @@ async def upload_file(file: UploadFile = File(...)):
         temp_path = f"./temp_{file.filename}"
         with open(temp_path,"wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
-        
+
+        global vectorstore 
+        vectorstore = None
         FILE_PATH = temp_path
         loader = DoclingLoader(
         file_path=FILE_PATH,
@@ -90,7 +92,6 @@ async def upload_file(file: UploadFile = File(...)):
         embedding = HuggingFaceEmbeddings(model_name=EMBED_MODEL_ID)
 
         milvus_uri = str(Path(mkdtemp()) / "docling.db")  # or set as needed
-        global vectorstore 
         vectorstore = Milvus.from_documents(
             documents=splits,
             embedding=embedding,

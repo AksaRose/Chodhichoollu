@@ -32,7 +32,7 @@ function App() {
       }
 
       const data = await response.text();
-      const aiMessage: ChatMessage = { type: 'ai', content: data.reply };
+      const aiMessage: ChatMessage = { type: 'ai', content: data };
       setMessages((prevMessages) => [...prevMessages, aiMessage]);
     } catch (error) {
       console.error('Error sending message:', error);

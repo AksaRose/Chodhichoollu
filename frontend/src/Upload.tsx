@@ -29,8 +29,11 @@ const Upload: React.FC = () => {
         body: formData,
       });
 
+      console.log('Upload response status:', response.status); // Add this line
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text(); // Try to get more error details
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
       }
 
       const data = await response.json();
@@ -44,6 +47,7 @@ const Upload: React.FC = () => {
     } catch (error: any) {
       setError(`Error uploading file: ${error.message}`);
       setUploadStatus(null);
+      console.error('Detailed upload error:', error); // Modify this line
     }
   };
 
