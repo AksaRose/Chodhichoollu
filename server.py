@@ -11,7 +11,6 @@ from langchain_milvus import Milvus
 from langchain_huggingface import HuggingFaceEmbeddings
 from tempfile import mkdtemp
 from langchain_docling.loader import ExportType
-import bs4
 from fastapi.responses import PlainTextResponse
 import shutil
 import os
@@ -36,7 +35,7 @@ app.add_middleware(
 )
 
 EXPORT_TYPE = ExportType.DOC_CHUNKS
-EMBED_MODEL_ID = "BAAI/bge-large-en-v1.5"
+EMBED_MODEL_ID = "sentence-transformers/all-MiniLM-L6-v2"
 MILVUS_URI = str(Path(mkdtemp()) / "docling.db")
 
 
