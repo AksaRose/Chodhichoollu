@@ -2,9 +2,7 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import uvicorn
-from langchain_community.document_loaders import PyPDFLoader
 from docling.chunking import HybridChunker
-from langchain_docling import DoclingLoader
 from pathlib import Path
 import store 
 from langchain_milvus import Milvus
@@ -14,6 +12,10 @@ from langchain_docling.loader import ExportType
 from fastapi.responses import PlainTextResponse
 import shutil
 import os
+from docling.document_converter import DocumentConverter, PdfFormatOption
+from docling.datamodel.pipeline_options import PdfPipelineOptions
+from docling.datamodel.base_models import InputFormat
+from langchain_core.documents import Document
 
 
 
@@ -62,18 +64,27 @@ async def upload_file(file: UploadFile = File(...)):
             shutil.copyfileobj(file.file, buffer)
 
         FILE_PATH = temp_path
-        loader = DoclingLoader(
-        file_path=FILE_PATH,
-        export_type=EXPORT_TYPE,
-        chunker=HybridChunker(tokenizer=EMBED_MODEL_ID),
-        )
+        # --- 1. Setup formula-aware converter ---
+        pipeline_options = PdfPipelineOptions()
+        pipeline_options.do_formula_enrichment = True
 
-        docs = loader.load()
+        converter = DocumentConverter(format_options={
+            InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
+        })
 
-        clean_docs = [
-            doc for doc in docs 
-            if not doc.page_content.strip().lower().startswith(("references", "bibliography"))
-        ]
+        result = converter.convert(FILE_PATH)
+        dl_doc = result.document
+
+        # --- 2. Chunk the document ---
+        chunker = HybridChunker()
+        chunks_iter = chunker.chunk(dl_doc=dl_doc) # split into LangChain docs
+
+        clean_docs = []
+        for chunk in chunks_iter:
+            text = chunker.contextualize(chunk=chunk)
+            if not text.strip().lower().startswith(("references", "bibliography")):
+                clean_docs.append(Document(page_content=text, metadata={}))
+
 
         if EXPORT_TYPE == ExportType.DOC_CHUNKS:
             splits = clean_docs 

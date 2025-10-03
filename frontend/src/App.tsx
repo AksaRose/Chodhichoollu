@@ -1,5 +1,10 @@
 import { useState, useEffect } from 'react';
 import Upload from './Upload.tsx';
+import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
+
 
 interface ChatMessage {
   type: 'user' | 'ai';
@@ -57,7 +62,11 @@ function App() {
               maxWidth: '75%',
               wordWrap: 'break-word'
             }}>
-              {msg.content}
+              <ReactMarkdown
+              children={msg.content}
+              remarkPlugins={[remarkMath]}
+              rehypePlugins={[rehypeKatex]}
+              />
             </span>
           </div>
         ))}

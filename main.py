@@ -11,6 +11,7 @@ from langgraph.graph import END
 from langgraph.prebuilt import ToolNode, tools_condition
 from langgraph.checkpoint.memory import MemorySaver
 import store
+import re
 
 
 load_dotenv()
@@ -82,9 +83,36 @@ def generate(state: MessagesState):
     ]
     prompt = [SystemMessage(system_message_content)] + conversation_messages
 
-    # Run
-    response = llm.invoke(prompt)
-    return {"messages": [response]}
+    def clean_spaced_latex(text: str) -> str:
+        """
+        Remove unnecessary spaces inside LaTeX commands and formulas.
+        """
+        # Remove spaces after backslash in commands: \text { -> \text{
+        text = re.sub(r'\\([a-zA-Z]+)\s*{', r'\\\1{', text)
+
+        # Remove spaces around operators inside math mode
+        def remove_inner_spaces(match):
+            content = match.group(1)
+            # remove spaces between letters/numbers/operators inside formula
+            content = re.sub(r'\s+', '', content)
+            return f'${content}$'  # keep single $ for inline or double $$ for block
+
+        # Apply only to block formulas $$...$$
+        text = re.sub(r'\$\$(.+?)\$\$', lambda m: f'\n$$\n{m.group(1).replace(" ", "")}\n$$\n', text, flags=re.DOTALL)
+
+        return text
+    raw_response = llm.invoke(prompt)
+    # Extract string content
+    if hasattr(raw_response, "content"):
+        text = raw_response.content
+    else:
+        text = str(raw_response)
+
+    # Auto convert formulas to block equations
+    text = clean_spaced_latex(text)
+
+    # Return as AIMessage
+    return {"messages": [AIMessage(content=text)]}
 
 
 
