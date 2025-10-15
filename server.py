@@ -16,6 +16,9 @@ from docling.document_converter import DocumentConverter, PdfFormatOption
 from docling.datamodel.pipeline_options import PdfPipelineOptions
 from docling.datamodel.base_models import InputFormat
 from langchain_core.documents import Document
+from docling.datamodel.pipeline_options import granite_picture_description
+
+
 
 
 
@@ -67,6 +70,9 @@ async def upload_file(file: UploadFile = File(...)):
         # --- 1. Setup formula-aware converter ---
         pipeline_options = PdfPipelineOptions()
         pipeline_options.do_formula_enrichment = True
+        pipeline_options.do_picture_description = True
+        pipeline_options.do_code_enrichment = True
+        pipeline_options.picture_description_options = granite_picture_description
 
         converter = DocumentConverter(format_options={
             InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
@@ -77,7 +83,7 @@ async def upload_file(file: UploadFile = File(...)):
 
         # --- 2. Chunk the document ---
         chunker = HybridChunker()
-        chunks_iter = chunker.chunk(dl_doc=dl_doc) # split into LangChain docs
+        chunks_iter = chunker.chunk(dl_doc=dl_doc) 
 
         clean_docs = []
         for chunk in chunks_iter:
