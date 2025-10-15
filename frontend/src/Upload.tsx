@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 
-const Upload: React.FC = () => {
+interface UploadProps {
+  onFileUploadSuccess: (fileName: string) => void;
+}
+
+const Upload: React.FC<UploadProps> = ({ onFileUploadSuccess }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadStatus, setUploadStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -40,6 +44,7 @@ const Upload: React.FC = () => {
       if (data.status === 'success') {
         setUploadStatus(`File uploaded successfully! Pages processed: ${data.pages}`);
         setSelectedFile(null);
+        onFileUploadSuccess(selectedFile.name); // Pass the file name to the parent component
       } else {
         setError(data.error || 'File upload failed.');
         setUploadStatus(null);

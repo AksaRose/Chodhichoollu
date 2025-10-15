@@ -9,7 +9,7 @@ from langchain_milvus import Milvus
 from langchain_huggingface import HuggingFaceEmbeddings
 from tempfile import mkdtemp
 from langchain_docling.loader import ExportType
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, FileResponse
 import shutil
 import os
 from docling.document_converter import DocumentConverter, PdfFormatOption
@@ -60,20 +60,23 @@ class ChatUploadResponse(BaseModel):
     error: str = None
 
 
+UPLOAD_DIR = "uploaded_pdfs"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
 @app.post("/upload", response_model=ChatUploadResponse)
-async def upload_file(file: UploadFile = File(...)):   
+async def upload_file(file: UploadFile = File(...)):
     try:
-        temp_path = f"./temp_{file.filename}"
-        with open(temp_path,"wb") as buffer:
+        file_location = os.path.join(UPLOAD_DIR, file.filename)
+        with open(file_location, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
-        FILE_PATH = temp_path
+        FILE_PATH = file_location
         # --- 1. Setup formula-aware converter ---
         pipeline_options = PdfPipelineOptions()
         pipeline_options.do_formula_enrichment = True
         pipeline_options.do_picture_description = True
         pipeline_options.do_code_enrichment = True
-        pipeline_options.picture_description_options = smolvlm_picture_description         
+        pipeline_options.picture_description_options = smolvlm_picture_description
 
         converter = DocumentConverter(format_options={
             InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
@@ -120,12 +123,16 @@ async def upload_file(file: UploadFile = File(...)):
             index_params={"index_type": "FLAT"},
             drop_old=True,
         )
-        return {"status": "success", "pages": len(clean_docs)}
+        return {"status": "success", "pages": len(clean_docs), "filename": file.filename}
     except Exception as e:
         return {"status": "error", "error": str(e)}
-    finally:
-        if os.path.exists(temp_path):
-            os.remove(temp_path)
+
+@app.get("/pdf/{filename}")
+async def get_pdf(filename: str):
+    file_path = os.path.join(UPLOAD_DIR, filename)
+    if os.path.exists(file_path):
+        return FileResponse(file_path, media_type="application/pdf")
+    return PlainTextResponse("File not found", status_code=404)
 
 
 

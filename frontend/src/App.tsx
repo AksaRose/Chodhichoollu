@@ -15,6 +15,11 @@ function App() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [threadId, setThreadId] = useState('default'); // Can be made dynamic if needed
+  const [uploadedPdf, setUploadedPdf] = useState<string | null>(null);
+
+  const handleFileUploadSuccess = (fileName: string) => {
+    setUploadedPdf(`http://localhost:8000/pdf/${fileName}`);
+  };
 
   const sendMessage = async () => {
     if (input.trim() === '') return;
@@ -47,49 +52,59 @@ function App() {
   };
 
   return (
-    <div style={{ fontFamily: 'Arial, sans-serif', width: '800px', margin: '20px auto', border: '1px solid #ccc', borderRadius: '8px', padding: '15px' }}>
-      <h1 style={{ textAlign: 'center', color: '#333' }}>Chat with PDF</h1>
-      <Upload /> {/* Integrated Upload component */}
-      <div style={{ border: '1px solid #eee', height: '400px', overflowY: 'scroll', padding: '10px', marginBottom: '10px', borderRadius: '4px', backgroundColor: '#f9f9f9' }}>
-        {messages.map((msg, index) => (
-          <div key={index} style={{ marginBottom: '8px', textAlign: msg.type === 'user' ? 'right' : 'left' }}>
-            <span style={{
-              display: 'inline-block',
-              padding: '8px 12px',
-              borderRadius: '18px',
-              backgroundColor: msg.type === 'user' ? '#007bff' : '#e2e6ea',
-              color: msg.type === 'user' ? 'white' : '#333',
-              maxWidth: '75%',
-              wordWrap: 'break-word'
-            }}>
-              <ReactMarkdown
-              children={msg.content}
-              remarkPlugins={[remarkMath]}
-              rehypePlugins={[rehypeKatex]}
-              />
-            </span>
+    <div style={{ fontFamily: 'Arial, sans-serif', width: '1200px', margin: '20px auto', border: '1px solid #ccc', borderRadius: '8px', padding: '15px', display: 'flex', gap: '15px' }}>
+      <div style={{ flex: 1 }}>
+        <h1 style={{ textAlign: 'center', color: '#333' }}>Upload PDF</h1>
+        <Upload onFileUploadSuccess={handleFileUploadSuccess} /> {/* Integrated Upload component */}
+        {uploadedPdf && (
+          <div style={{ marginTop: '20px', height: '500px', border: '1px solid #eee' }}>
+            <iframe src={uploadedPdf} width="100%" height="100%" style={{ border: 'none' }}></iframe>
           </div>
-        ))}
+        )}
       </div>
-      <div style={{ display: 'flex' }}>
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyPress={(e) => {
-            if (e.key === 'Enter') {
-              sendMessage();
-            }
-          }}
-          style={{ flexGrow: 1, padding: '10px', border: '1px solid #ccc', borderRadius: '4px 0 0 4px', outline: 'none' }}
-          placeholder="Type your message..."
-        />
-        <button
-          onClick={sendMessage}
-          style={{ padding: '10px 15px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '0 4px 4px 0', cursor: 'pointer', outline: 'none' }}
-        >
-          Send
-        </button>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <h1 style={{ textAlign: 'center', color: '#333' }}>Chat with Document</h1>
+        <div style={{ border: '1px solid #eee', height: '400px', overflowY: 'scroll', padding: '10px', marginBottom: '10px', borderRadius: '4px', backgroundColor: '#f9f9f9', flexGrow: 1 }}>
+          {messages.map((msg, index) => (
+            <div key={index} style={{ marginBottom: '8px', textAlign: msg.type === 'user' ? 'right' : 'left' }}>
+              <span style={{
+                display: 'inline-block',
+                padding: '8px 12px',
+                borderRadius: '18px',
+                backgroundColor: msg.type === 'user' ? '#007bff' : '#e2e6ea',
+                color: msg.type === 'user' ? 'white' : '#333',
+                maxWidth: '75%',
+                wordWrap: 'break-word'
+              }}>
+                <ReactMarkdown
+                children={msg.content}
+                remarkPlugins={[remarkMath]}
+                rehypePlugins={[rehypeKatex]}
+                />
+              </span>
+            </div>
+          ))}
+        </div>
+        <div style={{ display: 'flex' }}>
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                sendMessage();
+              }
+            }}
+            style={{ flexGrow: 1, padding: '10px', border: '1px solid #ccc', borderRadius: '4px 0 0 4px', outline: 'none' }}
+            placeholder="Type your message..."
+          />
+          <button
+            onClick={sendMessage}
+            style={{ padding: '10px 15px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '0 4px 4px 0', cursor: 'pointer', outline: 'none' }}
+          >
+            Send
+          </button>
+        </div>
       </div>
     </div>
   );
