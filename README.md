@@ -1,6 +1,6 @@
-# Docling Chatbot 🤖💬
+# Chodhichoollu🤖💬
 
-Welcome to the Docling Chatbot! This project is a super cool, document-aware chatbot that lets you upload PDFs and then chat with them. Ever wanted to ask your lengthy research papers questions and get instant answers? Now you can! We've spiced things up with formula, picture, and code enrichment to make your document interactions even smarter.
+Welcome to the Chodhichoollu! This project is a document-aware chatbot that lets you upload PDFs and then chat with them. Ever wanted to ask your lengthy research papers questions and get instant answers? Now you can! We've spiced things up with formula, picture, and code enrichment to make your document interactions even smarter.
 
 ## ✨ Features
 
@@ -10,6 +10,12 @@ Welcome to the Docling Chatbot! This project is a super cool, document-aware cha
 *   **Picture Description**: Can describe pictures found in your PDFs (thanks to `smolvlm_picture_description`!).
 *   **Code Enrichment**: Recognizes and handles code snippets in your documents.
 *   **Interactive UI**: A sleek React frontend for a smooth chat experience.
+
+## Working (SS):
+<img width="1252" height="652" alt="Screenshot 2025-10-15 at 12 03 53 PM" src="https://github.com/user-attachments/assets/43d4da98-ac34-4441-a7d5-3329c7bdad7a" />
+<img width="1252" height="656" alt="Screenshot 2025-10-15 at 11 58 21 AM" src="https://github.com/user-attachments/assets/1e1453cf-635f-4fe6-a7fc-a1b85b4d1209" />
+<img width="1252" height="656" alt="Screenshot 2025-10-15 at 11 46 48 AM" src="https://github.com/user-attachments/assets/f45866c2-05ff-445b-bad4-852cc315963a" />
+<img width="1242" height="655" alt="Screenshot 2025-10-15 at 12 13 08 PM" src="https://github.com/user-attachments/assets/0d203d6f-2d6b-408b-ad39-4df155b4e34b" />
 
 ## 🚀 Tech Stack
 
