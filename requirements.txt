@@ -9,3 +9,5 @@ pydantic
 PyPDF2
 bs4
 sentence-transformers
+langchain-milvus
+docling
