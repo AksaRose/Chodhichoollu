@@ -18,7 +18,7 @@ function App() {
   const [uploadedPdf, setUploadedPdf] = useState<string | null>(null);
 
   const handleFileUploadSuccess = (fileName: string) => {
-    setUploadedPdf(`http://localhost:8000/pdf/${fileName}`);
+    setUploadedPdf(`http://localhost:8001/pdf/${fileName}`);
   };
 
   const sendMessage = async () => {
@@ -29,7 +29,7 @@ function App() {
     setInput('');
 
     try {
-      const response = await fetch('http://localhost:8000/chat', {
+      const response = await fetch('http://localhost:8001/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
