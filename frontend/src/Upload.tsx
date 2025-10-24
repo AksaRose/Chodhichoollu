@@ -28,7 +28,7 @@ const Upload: React.FC<UploadProps> = ({ onFileUploadSuccess }) => {
 
     try {
       setUploadStatus('Uploading...');
-      const response = await fetch('http://localhost:8000/upload', {
+      const response = await fetch('http://localhost:8001/upload', {
         method: 'POST',
         body: formData,
       });

@@ -11,3 +11,4 @@ bs4
 sentence-transformers
 langchain-milvus
 docling
+langchain-docling

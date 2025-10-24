@@ -157,4 +157,4 @@ async def chat(request: ChatRequest):
         return response_text or "No response"
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001)

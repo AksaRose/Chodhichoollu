@@ -16,9 +16,9 @@ import re
 
 load_dotenv()
 
-print("Tracing:",os.getenv("LANGSMITH_TRACING"))
-print("API key:",os.getenv("LANGSMITH_API_KEY"))
-print("Google API key:",os.getenv("GOOGLE_API_KEY"))
+os.getenv("LANGSMITH_TRACING")
+os.getenv("LANGSMITH_API_KEY")
+os.getenv("GOOGLE_API_KEY")
 
 from langchain.chat_models import init_chat_model
 
